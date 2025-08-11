@@ -12,3 +12,4 @@ requests
 websocket-client
 cryptography
 yfinance
+plotly
