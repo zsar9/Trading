@@ -1,12 +1,28 @@
 import yaml
 import os
+import streamlit as st
 from core import data_handler, strategy, risk_manager, order_executor, portfolio_manager, backtester, monitor
 from core import security
 
-
 def load_config():
-    with open("config.yaml", "r") as f:
-        return yaml.safe_load(f)
+    # Path to config.yaml next to this script
+    config_path = os.path.join(os.path.dirname(__file__), "config.yaml")
+
+    if os.path.exists(config_path):
+        with open(config_path, "r") as f:
+            return yaml.safe_load(f)
+
+    # If config.yaml is missing, try loading from Streamlit secrets
+    if hasattr(st, "secrets") and len(st.secrets) > 0:
+        # Convert secrets to a regular dictionary
+        return dict(st.secrets)
+
+    # If neither method works, raise a descriptive error
+    raise FileNotFoundError(
+        "No config.yaml found and no Streamlit secrets provided. "
+        "Add a config.yaml file locally or define settings in .streamlit/secrets.toml"
+    )
+
 
 
 def init_api_keys(cfg):
