@@ -1,0 +1,163 @@
+# Run mode: "backtest", "paper", or "live"
+mode: "paper"
+
+# ---- Broker & Data feeds ----
+brokers:
+  alpaca:
+    enabled: true
+    base_url: "https://paper-api.alpaca.markets"
+    api_key: "<ALPACA_API_KEY_OR_ENCRYPTED_PLACEHOLDER>"
+    api_secret: "<ALPACA_SECRET_OR_ENCRYPTED_PLACEHOLDER>"
+    use_env: true
+  interactive_brokers:
+    enabled: false
+    host: "127.0.0.1"
+    port: 7497
+    client_id: 1
+    username: ""
+    password: ""
+  fallback_data:
+    enabled: true
+    provider: "yfinance"
+
+# ---- Market data settings ----
+data:
+  realtime:
+    enabled: true
+    websockets: true
+    reconnect_interval_secs: 5
+    max_backfill_bars: 5000
+  historical:
+    cache_dir: "./data/cache"
+    default_resolution: "1m"
+    tick_by_tick: false
+
+# ---- Strategies ----
+strategies:
+  active:
+    - "ema_crossover"
+    - "rsi_mean_reversion"
+  ema_crossover:
+    fast_period: 12
+    slow_period: 26
+    timeframe: "5m"
+    atr_filter: true
+    min_atr: 0.001
+  rsi_mean_reversion:
+    rsi_period: 14
+    oversold: 30
+    overbought: 70
+    timeframe: "15m"
+
+# ---- Risk management ----
+risk:
+  max_account_risk_pct: 2.0
+  max_position_pct_of_capital: 10
+  fixed_risk_dollars: null
+  stop_loss:
+    enabled: true
+    method: "percent"
+    value_pct: 1.5
+    atr_multiplier: 3.0
+  take_profit:
+    enabled: true
+    method: "reward:risk"
+    rr_ratio: 2.0
+  trailing_stop:
+    enabled: true
+    callback_pct: 0.5
+  daily_loss_limit_pct: 5.0
+  max_drawdown_pct: 20.0
+
+# ---- Portfolio management ----
+portfolio:
+  max_symbols: 20
+  correlation_threshold: 0.85
+  sector_allocation_limits:
+    Technology: 40
+    Financials: 30
+    Healthcare: 30
+  rebalance:
+    enabled: true
+    frequency: "weekly"
+    drift_threshold_pct: 5.0
+
+# ---- Execution settings ----
+execution:
+  slippage_model:
+    type: "percent"
+    value: 0.02
+  order_types_allowed:
+    - market
+    - limit
+    - stop
+    - bracket
+  max_concurrent_orders: 10
+  partial_fill_timeout_secs: 30
+
+# ---- Backtester / Simulation ----
+backtest:
+  starting_capital: 100000
+  commission_per_trade: 1.0
+  slippage_pct: 0.02
+  use_tick_data: false
+  walk_forward:
+    enabled: true
+    in_sample_years: 3
+    out_of_sample_years: 1
+  monte_carlo:
+    enabled: true
+    iterations: 200
+    drawdown_limit_pct: 40.0
+
+# ---- Monitoring & Alerts ----
+monitoring:
+  dashboard:
+    backend: "streamlit"
+    host: "0.0.0.0"
+    port: 8501
+  alerts:
+    email:
+      enabled: false
+      smtp_server: "smtp.example.com"
+      smtp_port: 587
+      from: "bot@example.com"
+      to:
+        - "you@example.com"
+    sms:
+      enabled: false
+      provider: "twilio"
+      account_sid: ""
+      auth_token: ""
+      from_number: ""
+      to_numbers: []
+
+# ---- Logging & Persistence ----
+logging:
+  level: "INFO"
+  log_dir: "./logs"
+  trade_log_file: "./logs/trades.csv"
+  audit_trail: "./logs/audit.log"
+  rotate_when_mb: 50
+
+state:
+  checkpoint_dir: "./state"
+  checkpoint_interval_secs: 60
+
+# ---- Security & Encryption ----
+security:
+  encrypt_keys: true
+  encryption_method: "file"
+  encrypted_keys_file: "./secrets/keys.enc"
+  key_management:
+    use_env_master_key: true
+    env_master_key_var: "BOT_MASTER_KEY"
+
+# ---- Misc / Dev settings ----
+dev:
+  dry_run: true
+  verbose: false
+  test_symbols:
+    - "AAPL"
+    - "MSFT"
+    - "SPY"
