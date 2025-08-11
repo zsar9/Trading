@@ -1,0 +1,11 @@
+# 1. See what’s changed
+git status
+
+# 2. Stage ALL new/modified files
+git add .
+
+# 3. Commit with a clear, descriptive message
+git commit -m "Initial commit: Full trading bot project structure and config setup"
+
+# 4. Push to your remote repository
+git push
