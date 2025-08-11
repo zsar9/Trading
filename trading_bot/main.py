@@ -22,19 +22,21 @@ def load_config():
         "No config.yaml found and no Streamlit secrets provided. "
         "Add a config.yaml file locally or define settings in .streamlit/secrets.toml"
     )
-
-
+    
 
 def init_api_keys(cfg):
     if cfg["security"]["encrypt_keys"]:
-        master_key = security.load_master_key(cfg["security"]["key_management"]["env_master_key_var"])
+        # If keys are in secrets, skip file decryption
+        if "API_KEY" in st.secrets and "API_SECRET" in st.secrets:
+            cfg["api_key"] = st.secrets["API_KEY"]
+            cfg["api_secret"] = st.secrets["API_SECRET"]
+            return cfg
+
+        master_key = security.load_master_key(cfg["security"]["key_manager_env_var"])
         with open(cfg["security"]["encrypted_keys_file"], "rb") as f:
             encrypted_data = f.read()
         decrypted = security.decrypt_data(encrypted_data, master_key)
-        # parse and inject keys into broker modules
-    elif cfg["brokers"]["alpaca"]["use_env"]:
-        cfg["brokers"]["alpaca"]["api_key"] = os.getenv("ALPACA_API_KEY")
-        cfg["brokers"]["alpaca"]["api_secret"] = os.getenv("ALPACA_SECRET_KEY")
+        # parse and inject keys into cfg
     return cfg
 
 
