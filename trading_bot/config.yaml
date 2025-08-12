@@ -146,13 +146,8 @@ state:
 
 # ---- Security & Encryption ----
 security:
-  encrypt_keys: true
-  encryption_method: "file"
-  encrypted_keys_file: "./secrets/keys.enc"
-  key_management:
-    use_env_master_key: true
-    env_master_key_var: "BOT_MASTER_KEY"
-
+  encrypt_keys: false
+  
 # ---- Misc / Dev settings ----
 dev:
   dry_run: true
